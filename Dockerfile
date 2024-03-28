@@ -17,15 +17,18 @@ WORKDIR /usr/src/app
 ################################################################################
 # Create a stage for installing production dependecies.
 FROM base as deps
+ARG YARN_VERSION=4.1.1
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.yarn to speed up subsequent builds.
 # Leverage bind mounts to package.json and yarn.lock to avoid having to copy them
 # into this layer.
+RUN corepack enable && corepack prepare yarn@${YARN_VERSION}
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
+    --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --production --frozen-lockfile
+    yarn workspaces focus --production
 
 ################################################################################
 # Create a stage for building the application.
@@ -35,16 +38,17 @@ FROM deps as build
 # "devDependencies" to be installed to build. If you don't need this, remove this step.
 RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=yarn.lock,target=yarn.lock \
+    --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=cache,target=/root/.yarn \
-    yarn install --frozen-lockfile
+    yarn install --immutable
 
 # Copy the rest of the source files into the image.
 COPY . .
 # Run the build script.
-RUN yarn run build
+RUN yarn build
 
 ################################################################################
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine as nginx
 
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
