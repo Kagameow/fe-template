@@ -1,6 +1,7 @@
 # fe-template
 
-This template should help get you started developing with Vue 3 in Vite.
+Vite + Vue template with TypeScript, ESLint, Prettier.
+Helm chart for deployment to Kubernetes.
 
 ## Recommended IDE Setup
 
