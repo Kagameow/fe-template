@@ -17,18 +17,16 @@ WORKDIR /usr/src/app
 ################################################################################
 # Create a stage for installing production dependecies.
 FROM base as deps
-ARG YARN_VERSION=4.1.1
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.yarn to speed up subsequent builds.
 # Leverage bind mounts to package.json and yarn.lock to avoid having to copy them
 # into this layer.
-RUN corepack enable && corepack prepare yarn@${YARN_VERSION}
+RUN corepack enable
 RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=yarn.lock,target=yarn.lock \
-    --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
-    --mount=type=cache,target=/root/.yarn \
-    yarn workspaces focus --production
+    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
+    --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --prod --frozen-lockfile
 
 ################################################################################
 # Create a stage for building the application.
@@ -37,15 +35,14 @@ FROM deps as build
 # Download additional development dependencies before building, as some projects require
 # "devDependencies" to be installed to build. If you don't need this, remove this step.
 RUN --mount=type=bind,source=package.json,target=package.json \
-    --mount=type=bind,source=yarn.lock,target=yarn.lock \
-    --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
-    --mount=type=cache,target=/root/.yarn \
-    yarn install --immutable
+    --mount=type=bind,source=pnpm-lock.yaml,target=pnpm-lock.yaml \
+    --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
 # Copy the rest of the source files into the image.
 COPY . .
 # Run the build script.
-RUN yarn build
+RUN pnpm run build
 
 ################################################################################
 FROM nginx:stable-alpine as nginx
