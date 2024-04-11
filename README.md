@@ -10,7 +10,7 @@ Vite + Vue template with TypeScript
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 JetBrains IDEs are also recommended, but make sure to use Vue Language Server (Volar).
-If you using Vim or Emacs, you probably already know what you're doing. 
+If you use Vim or Emacs, you probably already know what you're doing. 
 
 ## Type Support for `.vue` Imports in TS
 
@@ -27,12 +27,23 @@ Dockerfile is included for building a Docker [NGINX](https://nginx.com) image wi
 ## GitHub Actions
 
 GitHub Actions workflow is included for building Docker image and pushing it to GitHub Container Registry, 
-and then publishing Helm charts to GitHub Pages. 
+and subsequently [publishing Helm charts to GitHub Pages](https://helm.sh/docs/topics/chart_repository/).
 
 ## Project Setup
 
 Node 20 or higher is required.
 Node installation is recommended via [nvm](https://github.com/nvm-sh/nvm).
+
+If you are interested in GitHub Actions workflow that works with this project, you need to set up GitHub Variables for your repository at `https://github.com/<workspace>/<project>/settings/variables/actions`:
+- `DOCKER_IMAGE_NAME` - The name of the Docker image for uploading to the repository. Format: `<workspace>/<project>`
+
+Also `gh-pages` branch should be created for publishing Helm charts. To create empty gh-pages branch, run the following commands:
+
+```sh
+git switch --orphan gh-pages
+git commit --allow-empty -m "gh-pages branch created"
+git push -u origin gh-pages
+```
 
 Project is set up with [pnpm](https://pnpm.io/).
 Also, project is [Corepack](https://github.com/nodejs/corepack)-ready, it's usually already included in modern Node.js versions.
