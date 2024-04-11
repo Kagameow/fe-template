@@ -12,6 +12,16 @@ entries:
     - https://Kagameow.github.io/fe-template/helm-charts/app-0.1.4.tgz
     version: 0.1.4
   - apiVersion: v2
+    appVersion: 0.1.4-dev.3.main.0154f921
+    created: "2024-04-11T13:43:40.417131573Z"
+    description: A frontend web service template for reuse.
+    digest: 54f5f036dfc80285937b7457f3d64458b51eff63b48d52e5b4e4eefaee342e68
+    name: app
+    type: application
+    urls:
+    - https://Kagameow.github.io/fe-template/helm-charts/app-0.1.4-dev.3.main.0154f921.tgz
+    version: 0.1.4-dev.3.main.0154f921
+  - apiVersion: v2
     appVersion: 0.1.4-dev.2.main.b170df1f
     created: "2024-04-10T16:10:44.556914429Z"
     description: A frontend web service template for reuse.
@@ -101,4 +111,4 @@ entries:
     urls:
     - https://Kagameow.github.io/fe-template/helm-charts/app-0.0.0.tgz
     version: 0.0.0
-generated: "2024-04-10T16:10:44.556510956Z"
+generated: "2024-04-11T13:43:40.415708904Z"
